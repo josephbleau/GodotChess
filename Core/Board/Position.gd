@@ -6,10 +6,12 @@ var neighbors = {
 	"2": null, "4": null, "6": null, "8": null,
 }
 
-var color : Color
-var selected_color : Color
-
 var board
+
+var color : Color
+
+var selected = false
+var selected_color : Color
 
 func set_board(board):
 	self.board = board
@@ -27,19 +29,25 @@ func set_size(width, height):
 	$Background.rect_size = Vector2(width, height)
 	
 func position_clicked(event):
-	if $Piece != null:
-		if event is InputEventMouseButton and !event.pressed:
+	if event is InputEventMouseButton and !event.pressed:
+		if $Piece != null:
 			board.unselect_all_positions()
-			self.select()
+			board.set_selected_piece($Piece)
+			select_position()
 			
 			for valid_position in get_valid_next_position():
-				valid_position.select()
-	
-func select():
+				valid_position.select_position()
+		if board.get_selected_piece() != null and $Piece == null and selected:
+			board.move_piece(board.get_selected_piece(), self)
+			board.unselect_all_positions()
+		
+func select_position():
 	$Background.color = selected_color
+	selected = true
 	
-func unselect():
+func unselect_position():
 	$Background.color = color
+	selected = false
 
 func get_valid_next_position():
 	var valid_positions = []
@@ -75,11 +83,16 @@ func parse_movement_option(movement_option):
 				current_position = new_position
 			".":
 				if (current_position != null):
-					movement_options.append(current_position)
+					if(current_position.get_node("Piece") == null):
+						movement_options.append(current_position)
 			"+":
 				if (last_direction != null):
 					while(new_position != null):
-						movement_options.append(new_position)
+						if (new_position.get_node("Piece") == null):
+							movement_options.append(new_position)
+						else:
+							break
+						
 						new_position = step(new_position, last_direction)
 						current_position = new_position
 							

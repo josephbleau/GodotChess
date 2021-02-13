@@ -15,6 +15,8 @@ export (Color) var offset_selected_color
 
 export (Script) var configurator
 
+var selected_piece = null
+
 func _ready():
 	var positions = Node2D.new()
 	positions.name = "Positions"
@@ -26,7 +28,6 @@ func _ready():
 		position.name = str(i)
 		position.set_board(self)
 		$Positions.add_child(position)
-		
 		
 	populate_positions()
 	populate_pieces()
@@ -75,6 +76,19 @@ func populate_positions():
 func populate_pieces():
 	configurator.new().run($Positions, get_node("/root/Game/Players"))
 
+func move_piece(var piece, var position):
+	var current_parent = piece.get_parent_position()
+	current_parent.remove_child(piece)
+	
+	piece.set_parent_position(position)
+	position.add_child(piece)
+
 func unselect_all_positions():
 	for position in $Positions.get_children():
-		position.unselect()
+		position.unselect_position()
+		
+func get_selected_piece():
+	return selected_piece
+	
+func set_selected_piece(piece):
+	selected_piece = piece
