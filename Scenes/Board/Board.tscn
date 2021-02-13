@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scenes/Board/Board.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/Modes/Standard/Board/StandardBoard.gd" type="Script" id=2]
+
+[node name="Board" type="Node2D"]
+script = ExtResource( 1 )
+color = Color( 0.501961, 0.486275, 0.486275, 1 )
+offset_color = Color( 0.254902, 0.298039, 0.313726, 1 )
+configurator = ExtResource( 2 )

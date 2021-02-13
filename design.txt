@@ -1,0 +1,26 @@
+Invariants:
+	Game 
+		- Responsible for deciding turns
+		- Responsible for rendering the board
+		- Responsible for providing UI
+	A board 
+		- Responsible for the origanization of Positions
+		- Collection of Positions
+		- Determines where a piece is rendered
+		- Assigns a Position its neighbors
+	Positions 
+		- Responsible for containing a piece and allowing for traversal
+		- Contains a piece
+		- Contains references to adjacent / connected Positions
+		  with directionality (N, S, E, W)
+	Pieces 
+		- Exist at a position
+		- Must define a set of available moves given its position and given a board
+		- Belongs to a Player (Owner)
+	Turn-based (my turn / your turn / etc)
+
+Variants:
+	- Which player goes first
+	- Turn order (1, 2, 1, 2) or (1, 1, 2, 2, 1, 2, 1, 2), etc
+	- Starting Piece collections
+	- Win condition
