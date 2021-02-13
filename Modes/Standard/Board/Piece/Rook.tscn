@@ -5,7 +5,7 @@
 [ext_resource path="res://Assets/Sprites/black_rook.png" type="Texture" id=3]
 
 [node name="Piece" instance=ExtResource( 2 )]
-movement_behavior = ExtResource( 1 )
+movement_behavior_script = ExtResource( 1 )
 
 [node name="Sprite" parent="." index="0"]
 texture = ExtResource( 3 )

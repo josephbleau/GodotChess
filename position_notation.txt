@@ -5,3 +5,8 @@ Knight: [SSE, SSW, EEN, EES, NNE, NNW, WWN, WWS]
 Bishop: [(NE)+, (SE)+, (NW)+, (SW)+]
 Queen: [N+, S+, E+, W+, (NE)+, (SE)+, (NW)+, (SW)+]
 King: [N, S, E, W, NE, NW, SE, SW]
+
+
+789
+456
+123

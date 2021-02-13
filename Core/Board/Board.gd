@@ -44,12 +44,21 @@ func populate_positions():
 			var position = $Positions.get_child(idx)
 						
 			if (row > 0):
-				position.set_neighbor("N", $Positions.get_child(north_idx))
-				$Positions.get_child(north_idx).set_neighbor("S", position)
+				position.set_neighbor("8", $Positions.get_child(north_idx))
+				$Positions.get_child(north_idx).set_neighbor("2", position)
+				
+				if (col > 0):
+					position.set_neighbor("7", $Positions.get_child(north_idx - 1))
+					$Positions.get_child(north_idx - 1).set_neighbor("3", position)
+				
+				if (col < cols-1):
+					position.set_neighbor("9", $Positions.get_child(north_idx + 1))
+					$Positions.get_child(north_idx + 1).set_neighbor("1", position)
+				
 			
 			if (col > 0):
-				position.set_neighbor("W", $Positions.get_child(west_idx))
-				$Positions.get_child(west_idx).set_neighbor("E", position)
+				position.set_neighbor("4", $Positions.get_child(west_idx))
+				$Positions.get_child(west_idx).set_neighbor("6", position)
 			
 			var stagger = 0
 			if (row % 2 != 0):

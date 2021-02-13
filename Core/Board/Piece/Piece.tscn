@@ -6,7 +6,7 @@
 
 [node name="Piece" type="Node2D"]
 script = ExtResource( 1 )
-movement_behavior = ExtResource( 2 )
+movement_behavior_script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
 scale = Vector2( 2, 2 )
