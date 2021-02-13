@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Core/Board/Piece/Piece.gd" type="Script" id=1]
+[ext_resource path="res://Core/Board/Piece/Movement.gd" type="Script" id=2]
+[ext_resource path="res://Assets/Sprites/black_pawn.png" type="Texture" id=3]
+
+[node name="Piece" type="Node2D"]
+script = ExtResource( 1 )
+movement_behavior = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 2, 2 )
+texture = ExtResource( 3 )
+centered = false
+offset = Vector2( 10, 10 )
