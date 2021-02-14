@@ -1,5 +1,4 @@
 extends Node2D
-signal position_selected
 
 var neighbors = {
 	"1": null, "3": null, "5": self, "7": null, "9": null,
@@ -13,15 +12,15 @@ var color : Color
 var selected = false
 var selected_color : Color
 
-func set_board(board):
-	self.board = board
+func set_board(new_board):
+	board = new_board
 
 func set_neighbor(direction, position):
 	neighbors[direction] = position
 	
-func set_colors(color, selected_color):
-	self.color = color
-	self.selected_color = selected_color
+func set_colors(new_color, new_selected_color):
+	color = new_color
+	selected_color = new_selected_color
 	
 	$Background.color = color
 
@@ -30,16 +29,17 @@ func set_size(width, height):
 	
 func position_clicked(event):
 	if event is InputEventMouseButton and !event.pressed:
-		if $Piece != null:
+		if selected and board.get_selected_piece() != null:
+			board.move_piece(board.get_selected_piece(), self)
+			board.unselect_all_positions()
+			selected = false
+		elif $Piece != null:
 			board.unselect_all_positions()
 			board.set_selected_piece($Piece)
 			select_position()
 			
 			for valid_position in get_valid_next_position():
 				valid_position.select_position()
-		if board.get_selected_piece() != null and $Piece == null and selected:
-			board.move_piece(board.get_selected_piece(), self)
-			board.unselect_all_positions()
 		
 func select_position():
 	$Background.color = selected_color
@@ -52,20 +52,26 @@ func unselect_position():
 func get_valid_next_position():
 	var valid_positions = []
 	var movement_options = $Piece.get_movement_options()
+	var capture_options = $Piece.get_capture_options()
 	
-	if movement_options != null and len(movement_options) > 0:
-		for movement_option in movement_options:
-			var potential_positions = parse_movement_option(movement_option)
+	for movement_option in movement_options:
+		var potential_positions = parse_movement_option(movement_option, false)
 			
-			if (potential_positions != null and len(potential_positions) > 0):
-				valid_positions += potential_positions
+		if (potential_positions != null and len(potential_positions) > 0):
+			valid_positions += potential_positions
 			
+	for capture_option in capture_options:
+		var potential_positions = parse_movement_option(capture_option, true)
+			
+		if (potential_positions != null and len(potential_positions) > 0):
+			valid_positions += potential_positions
+	
 	return valid_positions
 
 func empty():
 	return get_node("Piece") == null
 
-func parse_movement_option(movement_option):
+func parse_movement_option(movement_option, capture):
 	var current_position = self
 	var movement_options = []
 	
@@ -83,20 +89,35 @@ func parse_movement_option(movement_option):
 				current_position = new_position
 			".":
 				if (current_position != null):
-					if(current_position.get_node("Piece") == null):
-						movement_options.append(current_position)
+					if !capture and current_position.empty():
+						movement_options.append(current_position) 
+					elif (capture and !current_position.empty()):
+						if !current_position.same_team($Piece):
+							movement_options.append(current_position)
 			"+":
 				if (last_direction != null):
 					while(new_position != null):
-						if (new_position.get_node("Piece") == null):
+						if new_position.empty():
 							movement_options.append(new_position)
 						else:
+							var same_team = new_position.same_team($Piece)
+							if capture and !same_team:
+								movement_options.append(new_position)
 							break
 						
 						new_position = step(new_position, last_direction)
 						current_position = new_position
-							
+						
 	return movement_options
 
 func step(position, direction):
 	return position.neighbors[direction]
+	
+func same_team(var piece):
+	return $Piece.same_team(piece)
+	
+func capture_piece():
+	var piece = get_node("Piece")
+	
+	if piece != null:
+		piece.queue_free()
