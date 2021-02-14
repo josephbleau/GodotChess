@@ -76,17 +76,25 @@ func populate_pieces():
 	configurator.new().run($Positions, get_node("/root/Game/Players"))
 
 func move_piece(var piece, var position):
+	# If we're attempting to move to the position that it is already on
+	# then nothing should happen
 	if piece.get_parent_position() == position:
 		return
 		
-	position.capture_piece()
+	# If the position we are moving to is occupied then capture the
+	# piece doing the occupying
+	if !position.empty():
+		position.capture_piece()
 	
+	# Remove the piece from its curent position
 	var current_parent = piece.get_parent_position()
 	current_parent.remove_child(piece)
 	
+	# Add the piece to its new location
 	piece.set_parent_position(position)
 	position.add_child(piece)
 	
+	# Let the piece know that it has been moved
 	piece.moved()
 
 func unselect_all_positions():

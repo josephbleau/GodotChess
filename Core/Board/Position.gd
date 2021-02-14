@@ -120,4 +120,4 @@ func capture_piece():
 	var piece = get_node("Piece")
 	
 	if piece != null:
-		piece.queue_free()
+		remove_child(piece)
