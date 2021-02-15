@@ -9,19 +9,37 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Reference",
+"class": "BoardConfigurator",
+"language": "GDScript",
+"path": "res://Core/Board/BoardConfigurator.gd"
+}, {
+"base": "Reference",
+"class": "GameLoader",
+"language": "GDScript",
+"path": "res://Core/GameLoader.gd"
+}, {
 "base": "Node2D",
 "class": "Piece",
 "language": "GDScript",
 "path": "res://Core/Board/Piece/Piece.gd"
+}, {
+"base": "BoardConfigurator",
+"class": "StandardBoard",
+"language": "GDScript",
+"path": "res://Modes/Standard/Board/StandardBoard.gd"
 } ]
 _global_script_class_icons={
-"Piece": ""
+"BoardConfigurator": "",
+"GameLoader": "",
+"Piece": "",
+"StandardBoard": ""
 }
 
 [application]
 
 config/name="Off My Chess"
-run/main_scene="res://Core/Game.tscn"
+run/main_scene="res://Core/Board/Board.tscn"
 config/icon="res://icon.png"
 
 [display]

@@ -3,77 +3,36 @@ extends Node
 export var cols = 8
 export var rows = 8
 
-var screen_width = 512
-var screen_height = 512
-
 export (Color) var color
 export (Color) var selected_color
-
 export (Color) var offset_color
 export (Color) var offset_selected_color
 
-export (Script) var configurator
+export (Script) var loader_script
+export (Script) var configurator_script
 
 var selected_piece : Piece = null
+var active_player
 
 func _ready():
-	var positions = Node2D.new()
-	positions.name = "Positions"
-	
-	add_child(positions)
-	
-	for i in range(cols * rows):
-		var position = preload("../Board/Position.tscn").instance()
-		position.name = str(i)
-		position.set_board(self)
-		$Positions.add_child(position)
-		
-	populate_positions()
-	populate_pieces()
-	
-func populate_positions():
-	var position_width = screen_width / cols
-	var position_height = screen_height / rows
+	var loader : GameLoader = loader_script.new()
+	var configurator : BoardConfigurator = configurator_script.new()
 
-	for row in range(rows):
-		for col  in range(cols):
-			var idx = (row * cols) + col
-			var north_idx = idx - cols
-			var west_idx = idx - 1
-			
-			var position = $Positions.get_child(idx)
-						
-			if (row > 0):
-				position.set_neighbor("8", $Positions.get_child(north_idx))
-				$Positions.get_child(north_idx).set_neighbor("2", position)
-				
-				if (col > 0):
-					position.set_neighbor("7", $Positions.get_child(north_idx - 1))
-					$Positions.get_child(north_idx - 1).set_neighbor("3", position)
-				
-				if (col < cols-1):
-					position.set_neighbor("9", $Positions.get_child(north_idx + 1))
-					$Positions.get_child(north_idx + 1).set_neighbor("1", position)
-				
-			
-			if (col > 0):
-				position.set_neighbor("4", $Positions.get_child(west_idx))
-				$Positions.get_child(west_idx).set_neighbor("6", position)
-			
-			var stagger = 0
-			if (row % 2 != 0):
-				stagger = 1
-					
-			if (idx + stagger) % 2 == 0:
-				position.set_colors(color, selected_color)
-			else:
-				position.set_colors(offset_color, offset_selected_color)
-				
-			position.set_size(position_width, position_height)
-			position.set_position(Vector2(col * position_width, row * position_height))
-				
-func populate_pieces():
-	configurator.new().run($Positions, get_node("/root/Game/Players"))
+	var board_configuration = {
+		"rows": rows,
+		"cols": cols,
+		"color": color,
+		"offset_color": offset_color,
+		"selected_color": selected_color,
+		"offset_selected_color": offset_selected_color
+	}
+	
+	# Instantiate the scene tree with the players and all of the positions
+	active_player = loader.populate_players(self)
+	loader.populate_positions(self, board_configuration)
+
+	# Add pieces to the board according to the game mode
+	configurator.run($Positions, $Players)
 
 func move_piece(var piece, var position):
 	# If we're attempting to move to the position that it is already on

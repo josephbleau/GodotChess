@@ -1,4 +1,4 @@
-extends Node
+class_name StandardBoard extends BoardConfigurator
 
 var piece_templates = {
 	"WP": preload("./Piece/WhitePawn.tscn"),
