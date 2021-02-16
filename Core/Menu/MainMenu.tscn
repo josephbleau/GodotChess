@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Core/Menu/MainMenu.gd" type="Script" id=1]
+
+[node name="MainMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NewGame" type="Button" parent="."]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 358.348
+margin_top = 103.461
+margin_right = 440.348
+margin_bottom = 123.461
+text = "New Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameModes" type="ItemList" parent="."]
+margin_left = 63.6968
+margin_top = 217.113
+margin_right = 441.697
+margin_bottom = 353.113
+[connection signal="button_up" from="NewGame" to="." method="_on_New_Game_Button_button_up"]
