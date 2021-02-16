@@ -1,19 +1,14 @@
 extends Node2D
+signal clicked
 
 var neighbors = {
 	"1": null, "3": null, "5": self, "7": null, "9": null,
 	"2": null, "4": null, "6": null, "8": null,
 }
 
-var board
-
 var color : Color
-
-var selected = false
 var selected_color : Color
-
-func set_board(new_board):
-	board = new_board
+var selected : bool = false
 
 func set_neighbor(direction, position):
 	neighbors[direction] = position
@@ -21,7 +16,6 @@ func set_neighbor(direction, position):
 func set_colors(new_color, new_selected_color):
 	color = new_color
 	selected_color = new_selected_color
-	
 	$Background.color = color
 
 func set_size(width, height):
@@ -29,17 +23,10 @@ func set_size(width, height):
 	
 func position_clicked(event):
 	if event is InputEventMouseButton and !event.pressed:
-		if selected and board.get_selected_piece() != null:
-			board.move_piece(board.get_selected_piece(), self)
-			board.unselect_all_positions()
-			selected = false
-		elif $Piece != null:
-			board.unselect_all_positions()
-			board.set_selected_piece($Piece)
-			select_position()
-			
-			for valid_position in get_valid_next_position():
-				valid_position.select_position()
+		emit_signal("clicked", self)
+		
+func is_selected():
+	return selected
 		
 func select_position():
 	$Background.color = selected_color
@@ -48,6 +35,9 @@ func select_position():
 func unselect_position():
 	$Background.color = color
 	selected = false
+
+func has_piece():
+	return get_node("Piece") != null
 
 func get_valid_next_position():
 	var valid_positions = []
@@ -68,9 +58,6 @@ func get_valid_next_position():
 	
 	return valid_positions
 
-func empty():
-	return get_node("Piece") == null
-
 func parse_movement_option(movement_option, capture):
 	var current_position = self
 	var movement_options = []
@@ -89,15 +76,15 @@ func parse_movement_option(movement_option, capture):
 				current_position = new_position
 			".":
 				if (current_position != null):
-					if !capture and current_position.empty():
+					if !capture and !current_position.has_piece():
 						movement_options.append(current_position) 
-					elif (capture and !current_position.empty()):
+					elif (capture and current_position.has_piece()):
 						if !current_position.same_team($Piece):
 							movement_options.append(current_position)
 			"+":
 				if (last_direction != null):
 					while(new_position != null):
-						if new_position.empty():
+						if !new_position.has_piece():
 							movement_options.append(new_position)
 						else:
 							var same_team = new_position.same_team($Piece)

@@ -12,7 +12,7 @@ export (Script) var loader_script
 export (Script) var configurator_script
 
 var selected_piece : Piece = null
-var active_player
+var active_player : Player = null
 
 func _ready():
 	var loader : GameLoader = loader_script.new()
@@ -28,11 +28,29 @@ func _ready():
 	}
 	
 	# Instantiate the scene tree with the players and all of the positions
-	active_player = loader.populate_players(self)
-	loader.populate_positions(self, board_configuration)
+	add_child(loader.populate_players())
+	add_child(loader.populate_positions(board_configuration))
 
 	# Add pieces to the board according to the game mode
 	configurator.run($Positions, $Players)
+
+	# Connect the position nodes on click event to our board
+	for position in $Positions.get_children():
+		position.connect("clicked", self, "on_position_clicked") 
+	
+func on_position_clicked(position):
+	var piece = position.get_node("Piece")
+	
+	if selected_piece != null and position.is_selected():
+		move_piece(selected_piece, position)
+		unselect_all_positions()
+	elif piece != null:
+		unselect_all_positions()
+		position.select_position()
+		selected_piece = piece
+		
+		for valid_position in position.get_valid_next_position():
+			valid_position.select_position()
 
 func move_piece(var piece, var position):
 	# If we're attempting to move to the position that it is already on
@@ -42,7 +60,7 @@ func move_piece(var piece, var position):
 		
 	# If the position we are moving to is occupied then capture the
 	# piece doing the occupying
-	if !position.empty():
+	if position.has_piece():
 		position.capture_piece()
 	
 	# Remove the piece from its curent position
@@ -61,9 +79,3 @@ func unselect_all_positions():
 	
 	for position in $Positions.get_children():
 		position.unselect_position()
-		
-func get_selected_piece():
-	return selected_piece
-	
-func set_selected_piece(piece):
-	selected_piece = piece

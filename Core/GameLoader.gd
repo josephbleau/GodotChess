@@ -3,7 +3,7 @@ class_name GameLoader
 var screen_width = 512
 var screen_height = 512
 
-func populate_players(var board):
+func populate_players():
 	var players = Node.new()
 	var player1 = preload("./Player/Player.tscn").instance()
 	var player2 = preload("./Player/Player.tscn").instance()
@@ -12,33 +12,29 @@ func populate_players(var board):
 	player1.name = "Player1"
 	player2.name = "Player2"
 	
-	board.add_child(players)
-	board.get_node("Players").add_child(player1)
-	board.get_node("Players").add_child(player2)
+	players.add_child(player1)
+	players.add_child(player2)
 
-	return player1
+	return players
 
-func instantiate_positions(var board, var cols, var rows):
+func instantiate_positions(var cols, var rows):
 	var positions = Node2D.new()
 	positions.name = "Positions"
-	
-	board.add_child(positions)
-	
+		
 	for i in range(cols * rows):
 		var position = preload("./Board/Position.tscn").instance()
 		position.name = str(i)
-		position.set_board(board)
-		board.get_node("Positions").add_child(position)
+		positions.add_child(position)
 
 	return positions
 
-func populate_positions(var board, var board_configuration):
+func populate_positions(var board_configuration):
 	var cols = board_configuration.cols
 	var rows = board_configuration.rows
 	var position_width = screen_width / cols
 	var position_height = screen_height / rows
 
-	var positions = instantiate_positions(board,cols, rows)
+	var positions = instantiate_positions(cols, rows)
 
 	for row in range(rows):
 		for col  in range(cols):
@@ -76,3 +72,5 @@ func populate_positions(var board, var board_configuration):
 				
 			position.set_size(position_width, position_height)
 			position.set_position(Vector2(col * position_width, row * position_height))
+	
+	return positions
